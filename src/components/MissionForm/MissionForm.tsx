@@ -53,7 +53,7 @@ const MissionForm: React.FC = () => {
       setMembers(members);
       // Set form values here
     }
-  }, [missionToUpdate]);
+  }, [missionToUpdate, setValue]);
 
   // Form submission handler
   const onSubmit = (data: FormValues) => {

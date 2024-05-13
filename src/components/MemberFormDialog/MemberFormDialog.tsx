@@ -57,7 +57,7 @@ const MemberFormDialog: React.FC<MemberFormDialogProps> = ({
       setValue("age", editMember.age);
       setValue("wealth", editMember.wealth);
     }
-  }, [open, setValue]);
+  }, [open, setValue, editMember, reset]);
 
   // Form submission handler
   const onSubmit = (data: FormValues) => {
