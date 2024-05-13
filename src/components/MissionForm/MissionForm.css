@@ -1,0 +1,28 @@
+.submit-button {
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.member-list {
+  box-shadow: 2px 2px 4px 1px #00000042;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+}
+.add-member-btn {
+  margin-bottom: 30px;
+}
+.MuiList-root {
+  background-color: inherit !important;
+}
+.no-member-section {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.member-list-container {
+  max-height: "300px";
+  overflow: "scroll";
+}

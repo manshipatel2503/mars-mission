@@ -1,0 +1,11 @@
+.action-buttons {
+  display: flex;
+  justify-content: end;
+}
+
+.add-member-section {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px;
+}

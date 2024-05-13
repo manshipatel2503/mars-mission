@@ -1,0 +1,15 @@
+.landing-page {
+  background-image: url("../../assets/Mars.jpg");
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.label {
+  color: white;
+  font-size: 60px;
+  margin-bottom: 40px;
+}

@@ -1,0 +1,12 @@
+.mission-title {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+.centered-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}

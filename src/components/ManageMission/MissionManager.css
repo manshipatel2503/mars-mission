@@ -1,0 +1,37 @@
+.mission-manager-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 60%;
+}
+
+.mission-title {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.no-missions-message {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #555;
+  display: flex;
+  justify-content: inherit;
+  flex-direction: column;
+  align-items: center;
+}
+.add-mission-btn {
+  display: flex;
+  justify-content: end;
+  margin: 10px;
+}
+.search-term {
+  width: 250px;
+  margin: 5px;
+}
+
+.mission-bar {
+  display: flex;
+  justify-content: space-between;
+}
