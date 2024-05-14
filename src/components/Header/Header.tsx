@@ -5,9 +5,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import SpaceShip from "../../assets/SpaceShip.png";
+import { useLocation } from "react-router-dom";
+
 import "./Header.css";
 
 const Header: React.FC = () => {
+  const location = useLocation();
+  if (location.pathname === "/") {
+    return null;
+  }
   return (
     <AppBar position="static" className="header">
       <Toolbar>
