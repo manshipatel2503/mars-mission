@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Avatar,
   Button,
@@ -12,6 +12,7 @@ import personImg from "../../assets/person.png";
 import pilotImg from "../../assets/pilot.png";
 import { getOptionValueById, jobTypes, memberTypes } from "../../data/constant";
 import "./MemberList.css";
+import ConfirmationDialog from "../ui/ConfirmationDialog";
 
 interface MemberListProps {
   members: Members[];
@@ -24,6 +25,29 @@ const MemberList: React.FC<MemberListProps> = ({
   handleEditMember,
   handleDeleteMember,
 }) => {
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [memberIdToDelete, setMemberIdToDelete] = useState<number>();
+
+  const handleDeleteConfirmationOpen = (memberId?: number) => {
+    if (memberId !== undefined) {
+      setMemberIdToDelete(memberId);
+      setDeleteConfirmationOpen(true);
+    }
+  };
+
+  const handleDeleteConfirmationClose = () => {
+    setDeleteConfirmationOpen(false);
+    setMemberIdToDelete(undefined);
+  };
+
+  const handleDeleteConfirmation = () => {
+    if (memberIdToDelete !== undefined) {
+      handleDeleteMember(memberIdToDelete);
+      setDeleteConfirmationOpen(false);
+      setMemberIdToDelete(undefined);
+    }
+  };
+
   // Display member list
   return (
     <div className="add-member-section">
@@ -104,7 +128,9 @@ const MemberList: React.FC<MemberListProps> = ({
                     <Button onClick={() => handleEditMember(member.id)}>
                       Edit
                     </Button>
-                    <Button onClick={() => handleDeleteMember(member.id)}>
+                    <Button
+                      onClick={() => handleDeleteConfirmationOpen(member.id)}
+                    >
                       Delete
                     </Button>
                   </div>
@@ -114,6 +140,16 @@ const MemberList: React.FC<MemberListProps> = ({
           </ListItem>
         </List>
       ))}
+
+      <ConfirmationDialog
+        open={deleteConfirmationOpen}
+        onClose={handleDeleteConfirmationClose}
+        onConfirm={handleDeleteConfirmation}
+        title="Delete Member"
+        contentText="Are you sure you want to delete this member?"
+        confirmButtonText="Delete"
+        rejectButtonText="Cancel"
+      />
     </div>
   );
 };

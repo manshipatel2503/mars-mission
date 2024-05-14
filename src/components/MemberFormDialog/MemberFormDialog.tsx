@@ -27,7 +27,7 @@ type FormValues = {
   experience: number;
   job: number;
   age: number;
-  wealth: number;
+  wealth: string;
 };
 
 const MemberFormDialog: React.FC<MemberFormDialogProps> = ({
@@ -61,14 +61,18 @@ const MemberFormDialog: React.FC<MemberFormDialogProps> = ({
 
   // Form submission handler
   const onSubmit = (data: FormValues) => {
-    if (editMember) {
-      const updatedMember: Members = data;
-      updatedMember.id = editMember.id;
-      saveMember(updatedMember);
-    } else {
-      saveMember(data);
+    try {
+      if (editMember) {
+        const updatedMember: Members = data;
+        updatedMember.id = editMember.id;
+        saveMember(updatedMember);
+      } else {
+        saveMember(data);
+      }
+      onClose();
+    } catch (error) {
+      console.log(error);
     }
-    onClose();
   };
 
   // Validation function for pilot count
@@ -195,7 +199,6 @@ const MemberFormDialog: React.FC<MemberFormDialogProps> = ({
                   <TextField
                     fullWidth
                     label="Wealth"
-                    type="number"
                     data-testid="wealth-field"
                     {...register("wealth", { required: "Wealth is required" })}
                     error={!!errors.wealth}

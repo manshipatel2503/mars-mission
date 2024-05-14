@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useSelector, shallowEqual } from "react-redux";
-import TableComponent from "../ui/Table";
+import TableComponent from "../MissionTable/MissionTable";
 import "./MissionManager.css";
 import "../../style.css";
 import { destination, getOptionValueById } from "../../data/constant";

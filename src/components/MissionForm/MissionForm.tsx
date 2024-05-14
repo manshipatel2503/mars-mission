@@ -31,13 +31,15 @@ const MissionForm: React.FC = () => {
   const [openAddMemberDialog, setAddMemberDialog] = useState(false);
   const [members, setMembers] = useState<Members[]>([]);
   const [editedMember, setEditedMember] = useState<Members | null>(null);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    status: "success",
+    message: "",
+  });
   // Form hooks
   const form = useForm<FormValues>({});
   const { register, handleSubmit, formState, setValue, reset } = form;
-  const { errors, isDirty, isValid, touchedFields } = formState;
+  const { errors, isValid, touchedFields } = formState;
 
   // Fetch mission to update if missionId is provided
   const missionToUpdate = missions.find((mission) => mission.id === missionId);
@@ -55,93 +57,143 @@ const MissionForm: React.FC = () => {
     }
   }, [missionToUpdate, setValue]);
 
+  // To open/close the snackbar
+  const setOpenSnackbar = (isOpen: boolean) => {
+    setSnackbar((prevSnackbar) => ({
+      ...prevSnackbar,
+      open: isOpen,
+    }));
+  };
+
+  // To set the snackbar status
+  const setSnackbarStatus = (status: string) => {
+    setSnackbar((prevSnackbar) => ({
+      ...prevSnackbar,
+      status: status,
+    }));
+  };
+
+  // To set the snackbar message
+  const setSnackbarMessage = (message: string) => {
+    setSnackbar((prevSnackbar) => ({
+      ...prevSnackbar,
+      message: message,
+    }));
+  };
+
   // Form submission handler
   const onSubmit = (data: FormValues) => {
-    if (missionToUpdate && checkMemberValidation()) {
-      if (
-        Object.keys(touchedFields).length === 0 ||
-        (Object.keys(touchedFields).length !== 0 && isValid)
-      ) {
+    try {
+      if (missionToUpdate && checkMemberValidation()) {
+        if (
+          Object.keys(touchedFields).length === 0 ||
+          (Object.keys(touchedFields).length !== 0 && isValid)
+        ) {
+          const missionData: Mission = {
+            ...data,
+            members,
+            id: missionId,
+          };
+          dispatch(updateMission(missionData));
+          setSnackbarMessage("Mission updated successfully");
+        }
+        navigateBackToMissionPage();
+      } else if (isValid && checkMemberValidation()) {
         const missionData: Mission = {
           ...data,
           members,
-          id: missionId,
+          id: Math.floor(Math.random() * 1000) + 1,
         };
-        dispatch(updateMission(missionData));
-        setSnackbarMessage("Mission updated successfully");
+        dispatch(addMission(missionData));
+        setSnackbarMessage("Mission added successfully");
+        setSnackbarStatus("success");
         setOpenSnackbar(true);
+        navigateBackToMissionPage();
       }
-      navigateBackToMissionPage();
-    } else if (isValid && checkMemberValidation()) {
-      const missionData: Mission = {
-        ...data,
-        members,
-        id: Math.floor(Math.random() * 1000) + 1,
-      };
-      dispatch(addMission(missionData));
-      setSnackbarMessage("Mission added successfully");
-      setOpenSnackbar(true);
-      navigateBackToMissionPage();
+    } catch (error) {
+      if (error) {
+        setSnackbarMessage("Something went wrong");
+        setSnackbarStatus("success");
+        setOpenSnackbar(true);
+        console.error("Error submitting form:", error);
+      }
     }
   };
   // Validate Members
   const checkMemberValidation = () => {
-    let isValid = true;
+    try {
+      let isValid = true;
 
-    // Validations
-    if (members.length === 0) {
-      setSnackbarMessage("A mission must have at least one member.");
-      isValid = false;
+      // Validations
+      if (members.length === 0) {
+        setSnackbarMessage("A mission must have at least one member.");
+        isValid = false;
+      }
+
+      const pilotCount = members.filter((member) => member.type === 1).length;
+      if (pilotCount !== 1) {
+        setSnackbarMessage("A mission must have exactly one pilot.");
+        isValid = false;
+      }
+
+      const engineers = members.filter((member) => member.type === 2);
+      const engineerJobs = new Set(engineers.map((engineer) => engineer.job));
+      if (engineers.length !== engineerJobs.size) {
+        setSnackbarMessage("All engineers must have different jobs.");
+        isValid = false;
+      }
+
+      const pilot = members.find((member) => member.type === 1);
+      if (pilot && pilot.experience < 10) {
+        setSnackbarMessage(
+          "Pilot should have at least 10 years of experience."
+        );
+        isValid = false;
+      }
+
+      const passengers = members.filter((member) => member.type === 3);
+      if (passengers.length === 0) {
+        setSnackbarMessage("At least one passenger is required.");
+        isValid = false;
+      }
+      setSnackbarStatus("error");
+      setOpenSnackbar(!isValid);
+
+      return isValid;
+    } catch (error) {
+      handleErrorMessage(error);
     }
-
-    const pilotCount = members.filter((member) => member.type === 1).length;
-    if (pilotCount !== 1) {
-      setSnackbarMessage("A mission must have exactly one pilot.");
-      isValid = false;
-    }
-
-    const engineers = members.filter((member) => member.type === 2);
-    const engineerJobs = new Set(engineers.map((engineer) => engineer.job));
-    if (engineers.length !== engineerJobs.size) {
-      setSnackbarMessage("All engineers must have different jobs.");
-      isValid = false;
-    }
-
-    const pilot = members.find((member) => member.type === 1);
-    if (pilot && pilot.experience < 10) {
-      setSnackbarMessage("Pilot should have at least 10 years of experience.");
-      isValid = false;
-    }
-
-    const passengers = members.filter((member) => member.type === 3);
-    if (passengers.length === 0) {
-      setSnackbarMessage("At least one passenger is required.");
-      isValid = false;
-    }
-
-    setOpenSnackbar(!isValid);
-
-    return isValid;
   };
 
   // Handle adding a new member
   const handleAddMember = (member: Members) => {
-    if (member.id) {
-      setMembers((prevMembers) =>
-        prevMembers.map((prevMember) =>
-          prevMember.id === member.id
-            ? { ...prevMember, ...member }
-            : prevMember
-        )
-      );
-      setEditedMember(null);
-    } else {
-      const newMember = {
-        ...member,
-        id: Math.floor(Math.random() * 1000) + 1,
-      };
-      setMembers((prevMembers) => [...prevMembers, newMember]);
+    try {
+      if (member.id) {
+        setMembers((prevMembers) =>
+          prevMembers.map((prevMember) =>
+            prevMember.id === member.id
+              ? { ...prevMember, ...member }
+              : prevMember
+          )
+        );
+        setEditedMember(null);
+      } else {
+        const newMember = {
+          ...member,
+          id: Math.floor(Math.random() * 1000) + 1,
+        };
+        setMembers((prevMembers) => [...prevMembers, newMember]);
+      }
+    } catch (error) {
+      handleErrorMessage(error);
     }
+  };
+
+  const handleErrorMessage = (error: any) => {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    setSnackbarMessage(errorMessage);
+    setSnackbarStatus("error");
+    setOpenSnackbar(true);
   };
 
   // Handle editing a member
@@ -160,6 +212,7 @@ const MissionForm: React.FC = () => {
     const updatedMembers = members.filter((member) => member.id !== deleteId);
     setMembers(updatedMembers);
     setSnackbarMessage("Member deleted successfully.");
+    setSnackbarStatus("success");
     setOpenSnackbar(true);
   };
 
@@ -280,7 +333,6 @@ const MissionForm: React.FC = () => {
               color="primary"
               className="submit-button"
               variant="contained"
-              disabled={!isDirty}
               onClick={navigateBackToMissionPage}
             >
               Back
@@ -290,16 +342,16 @@ const MissionForm: React.FC = () => {
               className="submit-button"
               type="submit"
               variant="contained"
-              disabled={!isDirty}
             >
               {missionToUpdate ? "Update" : "Submit"}
             </Button>
           </div>
         </form>
         <Snackbar
-          open={openSnackbar}
+          status={snackbar.status}
+          open={snackbar.open}
           onClose={() => setOpenSnackbar(false)}
-          message={snackbarMessage}
+          message={snackbar.message}
         />
       </Container>
     </>

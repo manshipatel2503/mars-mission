@@ -12,7 +12,7 @@ interface Members {
   experience: number;
   job: number;
   age: number;
-  wealth: number;
+  wealth: string;
 }
 
 type MissionState = {

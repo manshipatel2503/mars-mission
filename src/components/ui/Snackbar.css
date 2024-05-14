@@ -1,7 +1,7 @@
 .success-snackbar {
-  background-color: green;
+  background-color: rgb(4, 89, 4) !important;
 }
 
 .error-snackbar {
-  background-color: red;
+  background-color: rgb(183, 0, 0) !important;
 }

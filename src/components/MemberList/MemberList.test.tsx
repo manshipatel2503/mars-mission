@@ -9,7 +9,7 @@ describe("MemberList component", () => {
       experience: 5,
       job: 1,
       age: 30,
-      wealth: 100000,
+      wealth: "60000 Euro",
     },
     {
       id: 2,
@@ -17,7 +17,7 @@ describe("MemberList component", () => {
       experience: 10,
       job: 2,
       age: 40,
-      wealth: 150000,
+      wealth: "60000 Euro",
     },
     {
       id: 3,
@@ -25,7 +25,7 @@ describe("MemberList component", () => {
       experience: 0,
       job: 0,
       age: 25,
-      wealth: 50000,
+      wealth: "60000 Euro",
     },
   ];
 
