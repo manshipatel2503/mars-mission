@@ -42,6 +42,7 @@ const MissionManagerPage: React.FC = () => {
   const addMissionButton = () => {
     return (
       <Link to="/add-mission">
+        <input type="date" />
         <Button variant="contained" color="primary">
           Add Mission
         </Button>
